@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider, useAuth } from "@/context/AuthContext";
 import { installGlobalClickSound } from "@/lib/sounds";
+import BackgroundMusic from "@/components/BackgroundMusic";
 import Landing from "@/pages/Landing";
 import Login from "@/pages/Login";
 import Register from "@/pages/Register";
@@ -25,6 +26,7 @@ function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
+        <BackgroundMusic />
         <Toaster position="top-center" richColors />
         <Routes>
           <Route path="/" element={<Landing />} />

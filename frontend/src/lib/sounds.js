@@ -1,6 +1,7 @@
 /**
  * Escarté sound library.
  * Pre-loads audio and provides simple play() helpers. Volume-tuned.
+ * Also manages a looping background music track with route-aware volume.
  */
 
 const SOUNDS = {
@@ -16,15 +17,14 @@ const SOUNDS = {
     url: "https://customer-assets.emergentagent.com/job_spark-assess/artifacts/f2ohn07j_confetti-pop.mp3",
     volume: 0.55,
   },
-  typing: {
-    url: "https://customer-assets.emergentagent.com/job_spark-assess/artifacts/o77nq9hy_keyboard-sound-effect-typing.mp3",
-    volume: 0.3,
-  },
   error: {
     url: "https://customer-assets.emergentagent.com/job_spark-assess/artifacts/4gnp8xqd_typing-error.mp3",
     volume: 0.5,
   },
 };
+
+const BG_MUSIC_URL =
+  "https://customer-assets.emergentagent.com/job_spark-assess/artifacts/vnrfh2wl_ocean-background-mene.mp3";
 
 const cache = {};
 
@@ -43,22 +43,67 @@ export function playSound(name) {
   try {
     const a = get(name);
     if (!a) return;
-    // Clone so overlapping plays don't cut each other off
     const clone = a.cloneNode();
     clone.volume = SOUNDS[name].volume;
     clone.play().catch(() => {});
   } catch { /* ignore */ }
 }
 
-export function stopSound(name) {
-  const a = cache[name];
-  if (!a) return;
-  try { a.pause(); a.currentTime = 0; } catch { /* ignore */ }
+// ---------- Background music ----------
+let bgAudio = null;
+let bgStarted = false;
+let bgTargetVolume = 0.4;
+
+function ensureBg() {
+  if (bgAudio) return bgAudio;
+  bgAudio = new Audio(BG_MUSIC_URL);
+  bgAudio.loop = true;
+  bgAudio.volume = 0;
+  bgAudio.preload = "auto";
+  return bgAudio;
+}
+
+function fadeTo(target, ms = 800) {
+  const a = ensureBg();
+  const start = a.volume;
+  const startTime = performance.now();
+  function step(now) {
+    const t = Math.min(1, (now - startTime) / ms);
+    a.volume = Math.max(0, Math.min(1, start + (target - start) * t));
+    if (t < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+/** Start BG music (must be called from a user-gesture handler). */
+export function startBgMusic() {
+  const a = ensureBg();
+  if (bgStarted) return;
+  a.play()
+    .then(() => {
+      bgStarted = true;
+      fadeTo(bgTargetVolume, 1200);
+    })
+    .catch(() => { /* browser blocked — will retry on next gesture */ });
+}
+
+/** Set target volume (medium ~0.4, dim ~0.08). Fades smoothly. */
+export function setBgVolume(target) {
+  bgTargetVolume = target;
+  if (!bgStarted) return; // will apply once started
+  fadeTo(target, 900);
+}
+
+export function stopBgMusic() {
+  const a = ensureBg();
+  fadeTo(0, 400);
+  setTimeout(() => { try { a.pause(); } catch { /* ignore */ } bgStarted = false; }, 500);
 }
 
 // Preload on first import
 if (typeof window !== "undefined") {
   Object.keys(SOUNDS).forEach((k) => get(k));
+  ensureBg();
 }
 
 /** Attach a global "any button click" listener. Call once at app root. */
@@ -68,12 +113,19 @@ export function installGlobalClickSound() {
   document.addEventListener(
     "click",
     (e) => {
+      // First user gesture — start BG music
+      if (!bgStarted) startBgMusic();
+
       const el = e.target?.closest?.("button, a[href], [role='button']");
       if (!el) return;
-      // Skip if explicitly opted out
       if (el.dataset?.noClickSound === "true") return;
       playSound("click");
     },
     true
   );
+
+  // Also start on first key press or touch (in case landing has no click)
+  const kick = () => { if (!bgStarted) startBgMusic(); };
+  window.addEventListener("keydown", kick, { once: true });
+  window.addEventListener("touchstart", kick, { once: true });
 }
