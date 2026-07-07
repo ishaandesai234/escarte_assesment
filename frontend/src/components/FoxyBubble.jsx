@@ -1,9 +1,15 @@
+import { useEffect } from "react";
 import Foxy from "./Foxy";
+import { playSound } from "@/lib/sounds";
 
 /**
- * Speech bubble beside Foxy.
+ * Speech bubble beside Foxy. Plays typing sound whenever the text changes.
  */
 export default function FoxyBubble({ mood = "neutral", text, size = 120, side = "right" }) {
+  useEffect(() => {
+    if (text) playSound("typing");
+  }, [text]);
+
   return (
     <div className={`flex items-end gap-3 ${side === "left" ? "flex-row-reverse" : ""}`} data-testid="foxy-bubble">
       <Foxy mood={mood} size={size} />

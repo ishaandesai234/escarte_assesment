@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "@/lib/api";
 import Foxy from "@/components/Foxy";
@@ -8,6 +8,7 @@ import QuestionCard from "@/components/QuestionCard";
 import FireStreak from "@/components/FireStreak";
 import { toast } from "sonner";
 import confetti from "canvas-confetti";
+import { playSound } from "@/lib/sounds";
 
 export default function Quiz() {
   const { category } = useParams(); // "full" or category id
@@ -20,7 +21,6 @@ export default function Quiz() {
   const [streak, setStreak] = useState(0);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const sfxRef = useRef({});
 
   useEffect(() => {
     (async () => {
@@ -37,27 +37,6 @@ export default function Quiz() {
     })();
   }, [category, nav]);
 
-  const playSound = (kind) => {
-    // Simple beep with WebAudio
-    try {
-      const AudioCtx = window.AudioContext || window.webkitAudioContext;
-      const ctx = sfxRef.current.ctx || (sfxRef.current.ctx = new AudioCtx());
-      const o = ctx.createOscillator();
-      const g = ctx.createGain();
-      o.connect(g); g.connect(ctx.destination);
-      if (kind === "correct") {
-        o.frequency.setValueAtTime(660, ctx.currentTime);
-        o.frequency.exponentialRampToValueAtTime(990, ctx.currentTime + 0.15);
-      } else {
-        o.frequency.setValueAtTime(220, ctx.currentTime);
-        o.frequency.exponentialRampToValueAtTime(110, ctx.currentTime + 0.2);
-      }
-      g.gain.setValueAtTime(0.15, ctx.currentTime);
-      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
-      o.start(); o.stop(ctx.currentTime + 0.3);
-    } catch {}
-  };
-
   const q = questions[idx];
   const progress = questions.length ? Math.round((idx / questions.length) * 100) : 0;
 
@@ -68,12 +47,18 @@ export default function Quiz() {
         question_id: q.id, answer,
       });
       setFeedback(data);
-      playSound(data.correct ? "correct" : "wrong");
       if (data.correct) {
-        setStreak((s) => s + 1);
+        const newStreak = streak + 1;
+        setStreak(newStreak);
+        playSound("confetti");
         confetti({ particleCount: 40, spread: 60, origin: { y: 0.7 }, colors: ["#E5A934", "#B71C1C", "#1A2A4F"] });
+        // Fire crackle triggers when a streak of 2+ ignites (or continues)
+        if (newStreak >= 2) {
+          setTimeout(() => playSound("fire"), 250);
+        }
       } else {
         setStreak(0);
+        playSound("error");
       }
       setAnswers((prev) => [
         ...prev,
@@ -105,6 +90,7 @@ export default function Quiz() {
           answers,
         });
         // Big confetti finish
+        playSound("confetti");
         confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
         nav(`/results/${data.id}`);
       } catch (e) {
