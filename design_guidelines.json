@@ -1,0 +1,74 @@
+{
+  "theme": "light",
+  "archetype": "6 (Vibrant Play)",
+  "design_philosophy": "Mobile-first, gamified, non-intimidating, Duolingo-style. Relies on tactile 'chunky' UI elements, emotional character reactions, and generous rounded geometry.",
+  "colors": {
+    "primary": "#FF822D",
+    "primary_dark": "#CC641C",
+    "secondary_green": "#E8F5E9",
+    "secondary_blue": "#E3F2FD",
+    "success": "#58CC02",
+    "success_dark": "#46A302",
+    "error": "#FF4B4B",
+    "error_dark": "#CC3C3C",
+    "background": "#F4F8F5",
+    "surface": "#FFFDF7",
+    "text_main": "#1E293B",
+    "text_muted": "#64748B",
+    "border": "#E2E8F0"
+  },
+  "typography": {
+    "font_headings": "Fredoka, sans-serif",
+    "font_body": "Nunito, sans-serif",
+    "h1": "text-4xl sm:text-5xl tracking-tight font-bold text-[#1E293B]",
+    "h2": "text-2xl sm:text-3xl tracking-tight font-bold text-[#1E293B]",
+    "h3": "text-xl sm:text-2xl font-bold text-[#1E293B]",
+    "body": "text-base sm:text-lg leading-relaxed font-medium text-[#1E293B]",
+    "button": "text-lg font-bold tracking-wide uppercase"
+  },
+  "spacing_and_layout": {
+    "container_padding": "p-4 sm:p-6",
+    "card_padding": "p-6 sm:p-8",
+    "gap_standard": "gap-4 sm:gap-6",
+    "border_radius": "rounded-2xl sm:rounded-3xl"
+  },
+  "components": {
+    "button_primary": "w-full bg-[#58CC02] text-white rounded-2xl py-4 font-bold text-lg border-b-[6px] border-[#46A302] hover:bg-[#4ddb00] active:border-b-0 active:translate-y-[6px] transition-all",
+    "button_secondary": "w-full bg-white text-[#1E293B] rounded-2xl py-4 font-bold text-lg border-2 border-slate-200 border-b-[6px] hover:bg-slate-50 active:border-b-2 active:translate-y-[4px] transition-all",
+    "quiz_card": "bg-[#FFFDF7] rounded-3xl border-2 border-slate-200 p-6 shadow-[0_8px_0_0_rgba(226,232,240,1)]",
+    "category_card": "bg-white rounded-3xl border-2 border-slate-200 p-6 flex flex-col items-center justify-center gap-4 hover:border-[#FF822D] hover:bg-[#FFFDF7] cursor-pointer transition-all shadow-[0_4px_0_0_rgba(226,232,240,1)] active:shadow-none active:translate-y-[4px]",
+    "progress_bar_container": "h-4 rounded-full bg-slate-200 overflow-hidden w-full",
+    "progress_bar_fill": "h-full bg-[#FF822D] rounded-full transition-all duration-500 ease-out",
+    "mascot_container": "relative w-32 h-32 mx-auto mb-6",
+    "radar_chart": "Use Recharts library. Radar component should use #FF822D fill with 0.4 opacity, and #FF822D stroke. Ensure PolarGrid is muted (#E2E8F0)."
+  },
+  "animations": {
+    "bounce_correct": "animate-[bounce_0.5s_ease-in-out]",
+    "shake_wrong": "animate-[shake_0.4s_ease-in-out]",
+    "micro_interactions": "active:scale-95 transition-transform"
+  },
+  "icons_and_assets": {
+    "library": "@phosphor-icons/react",
+    "style": "Duotone for categories, Fill for badges. Size 32px to 64px.",
+    "badges": "Use golden-colored Phosphor icons wrapped in circular containers with heavy drop shadows to resemble physical badges."
+  },
+  "media": {
+    "mascot_neutral": "https://images.unsplash.com/photo-1647360077705-a4769835da28?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA2OTV8MHwxfHNlYXJjaHw0fHxjdXRlJTIwb3JhbmdlJTIwY2FydG9vbiUyMGZveCUyMGlsbHVzdHJhdGlvbnxlbnwwfHx8fDE3ODM0MTU2MjV8MA&ixlib=rb-4.1.0&q=85",
+    "mascot_happy": "https://images.unsplash.com/photo-1648455803226-a55145ab52ed?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA2OTV8MHwxfHNlYXJjaHwzfHxjdXRlJTIwb3JhbmdlJTIwY2FydG9vbiUyMGZveCUyMGlsbHVzdHJhdGlvbnxlbnwwfHx8fDE3ODM0MTU2MjV8MA&ixlib=rb-4.1.0&q=85",
+    "confetti_bg": "https://images.unsplash.com/photo-1564822260554-877d6583f01c?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1MTN8MHwxfHNlYXJjaHwzfHxjb25mZXR0aSUyMGV4cGxvc2lvbiUyMGdyYXBoaWN8ZW58MHx8fHwxNzgzNDE1NjI1fDA&ixlib=rb-4.1.0&q=85",
+    "badge_placeholder": "https://images.unsplash.com/photo-1613826488066-5a115a53a1fc?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1MDV8MHwxfHNlYXJjaHwyfHxnb2xkJTIwbWVkYWwlMjBiYWRnZXxlbnwwfHx8fDE3ODM0MTU2Mzh8MA&ixlib=rb-4.1.0&q=85"
+  },
+  "testing_attributes": {
+    "requirements": "All interactive and key informational elements MUST include a data-testid attribute in kebab-case, role-based format (e.g., data-testid='submit-answer-button', data-testid='category-card-english')."
+  },
+  "instructions_to_main_agent": [
+    "Import 'Fredoka' and 'Nunito' fonts from Google Fonts in index.css.",
+    "Implement chunky Duolingo-style buttons using the exact Tailwind classes provided in the components block.",
+    "Use 'react-confetti' for the celebration screen. Do not just use a background image.",
+    "For Foxy the mascot, use the provided media URLs (mascot_neutral, mascot_happy) as fallbacks, but feel free to structure a solid avatar container.",
+    "Ensure the UI layout is strictly mobile-first. Restrict max-width on desktop to 'max-w-md mx-auto' to emulate a phone app experience.",
+    "Build the 7 question formats keeping the card wrapper consistent.",
+    "Use Recharts for the results report radar chart.",
+    "Add 'data-testid' attributes extensively across all interactive components."
+  ]
+}
