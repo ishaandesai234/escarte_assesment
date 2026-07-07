@@ -1,0 +1,16 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Shared Operational access rules
+    // Note: Due to explicit request for "No registration/No email login", 
+    // the system relies on a shared secret code at the app entry level.
+    // Standard request.auth based rules are not used here.
+    
+    match /{document=**} {
+      allow read, write: if true; // Placeholder for simplified prototype access
+    }
+
+    // In a production app with the same requirements, we would use 
+    // Anonymous Auth and custom claims or a 'verified_sessions' collection.
+  }
+}

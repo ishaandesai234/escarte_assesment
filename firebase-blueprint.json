@@ -1,0 +1,140 @@
+{
+  "entities": {
+    "Task": {
+      "title": "Task",
+      "description": "Daily operational tasks assigned to teachers",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "priority": { "type": "string", "enum": ["high", "medium", "low"] },
+        "status": { "type": "string", "enum": ["pending", "in progress", "done", "flagged"] },
+        "assignedTo": { "type": "string", "description": "User ID of the teacher" },
+        "date": { "type": "string", "format": "date" },
+        "notes": { "type": "string" },
+        "teacherName": { "type": "string" }
+      },
+      "required": ["title", "priority", "status", "assignedTo", "date"]
+    },
+    "Enquiry": {
+      "title": "Enquiry",
+      "description": "Student enquiries for potential admissions",
+      "type": "object",
+      "properties": {
+        "studentName": { "type": "string" },
+        "parentName": { "type": "string" },
+        "contact": { "type": "string" },
+        "course": { "type": "string" },
+        "source": { "type": "string" },
+        "date": { "type": "string", "format": "date" },
+        "assignedTo": { "type": "string" },
+        "status": { "type": "string", "enum": ["new", "demo_scheduled", "converted", "rejected"] }
+      },
+      "required": ["studentName", "contact", "date"]
+    },
+    "Demo": {
+      "title": "Demo",
+      "description": "Demo sessions scheduled for enquired students",
+      "type": "object",
+      "properties": {
+        "enquiryId": { "type": "string" },
+        "studentName": { "type": "string" },
+        "date": { "type": "string", "format": "date" },
+        "assignedTo": { "type": "string" },
+        "outcome": { "type": "string", "enum": ["pending", "converted", "not interested", "follow-up", "rescheduled"] },
+        "feedback": { "type": "string" }
+      },
+      "required": ["enquiryId", "studentName", "date", "assignedTo", "outcome"]
+    },
+    "Batch": {
+      "title": "Batch",
+      "description": "Educational batches or classes",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "subject": { "type": "string" },
+        "schedule": { "type": "string" },
+        "teacherId": { "type": "string" },
+        "teacherName": { "type": "string" }
+      },
+      "required": ["name", "subject", "teacherId"]
+    },
+    "Student": {
+      "title": "Student",
+      "description": "Active student records",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "parentName": { "type": "string" },
+        "contact": { "type": "string" },
+        "batchId": { "type": "string" },
+        "feeStatus": { "type": "string", "enum": ["paid", "pending", "overdue"] },
+        "feeAmount": { "type": "number" },
+        "feeDueDate": { "type": "string", "format": "date" }
+      },
+      "required": ["name", "batchId", "feeStatus"]
+    },
+    "Attendance": {
+      "title": "Attendance",
+      "description": "Attendance logs for batches",
+      "type": "object",
+      "properties": {
+        "batchId": { "type": "string" },
+        "date": { "type": "string", "format": "date" },
+        "presentStudentIds": { "type": "array", "items": { "type": "string" } },
+        "teacherId": { "type": "string" }
+      },
+      "required": ["batchId", "date", "presentStudentIds"]
+    },
+    "Notice": {
+      "title": "Notice",
+      "description": "Announcements for staff",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "content": { "type": "string" },
+        "targetRole": { "type": "string" },
+        "targetTeacherId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "readBy": { "type": "array", "items": { "type": "string" } }
+      },
+      "required": ["title", "content", "createdAt"]
+    },
+    "User": {
+      "title": "User",
+      "description": "System users (Staff)",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "designation": { "type": "string", "enum": ["Owner", "Manager", "Teacher"] },
+        "active": { "type": "boolean" }
+      },
+      "required": ["name", "designation"]
+    },
+    "ChatMessage": {
+      "title": "Chat Message",
+      "description": "Internal staff communication",
+      "type": "object",
+      "properties": {
+        "senderId": { "type": "string" },
+        "senderName": { "type": "string" },
+        "senderRole": { "type": "string" },
+        "content": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["senderId", "senderName", "content", "createdAt"]
+    }
+  },
+  "firestore": {
+    "tasks": { "schema": "Task", "description": "Collection of tasks" },
+    "enquiries": { "schema": "Enquiry", "description": "Collection of enquiries" },
+    "demos": { "schema": "Demo", "description": "Collection of demo sessions" },
+    "batches": { "schema": "Batch", "description": "Collection of batches" },
+    "students": { "schema": "Student", "description": "Collection of students" },
+    "attendance": { "schema": "Attendance", "description": "Collection of attendance logs" },
+    "notices": { "schema": "Notice", "description": "Collection of notices" },
+    "users": { "schema": "User", "description": "Collection of system users" },
+    "messages": { "schema": "ChatMessage", "description": "Staff chat messages" }
+  }
+}
